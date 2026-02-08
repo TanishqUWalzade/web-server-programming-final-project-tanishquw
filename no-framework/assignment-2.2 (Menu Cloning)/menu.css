@@ -1,0 +1,115 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #DCFCE7;
+  color: #111;
+}
+
+.topbar{
+  background: #229b40;
+  height: 31px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.menu .top{
+  list-style: none;
+  margin: 0;
+  padding: 0;     
+  display: flex;
+  justify-content: flex-start;
+  gap: 0;                    
+}
+
+.menu-item{
+  position: relative;
+  width: 100px;
+}
+
+.menu-btn{
+  width: 100%;
+  font-size: 18px;
+  text-align: left;        
+  padding: 5px 10px;
+  border: 0;
+  background: transparent;
+}
+
+/* Was knowing the normal one referenced this nth-child one from W3Schools */
+
+/* Made top menu bold */
+.menu-item .menu-btn { font-weight: 700; }
+
+/* Made only Edit as unbold */
+.menu-item:nth-child(2) .menu-btn { font-weight: 400; }
+
+.drop {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #06d641;
+  width: 100%;          
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Keeping the dropdown open after click was learned from W3Schools (CSS Dropdown Menu) */
+
+/* Dropdown opens over hover */
+.menu-item:hover .drop { 
+  display: block; 
+}
+
+/* Extra Credit Task*/
+.menu-item:nth-child(2):focus-within .drop { 
+  display: block; 
+}
+
+/* Highlight color when Edit dropdown is open*/
+.menu-item:hover,
+.menu-item:nth-child(2):focus-within{
+  background: #06d641;
+}
+
+.drop a {
+  display: block;
+  padding: 5px 10px;
+  text-decoration: none;
+}
+
+.drop a:hover {
+  background: #08f34a;
+}
+
+.page {
+  padding: 30px 16px;
+}
+
+.panel {
+  background: #fff;
+  width: 100%;                 
+  max-width: 1180px;
+  margin: 0 auto 28px;         
+  padding: 15px 28px 27px 15px;
+  border-left: 5px solid #2aa84a;
+  box-sizing: border-box;      
+}
+
+.panel-green { border-left-color: #2aa84a; }
+.panel-yellow { border-left-color: #fadd03; }
+
+.panel h3 {
+  margin: 0 0 12px 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.panel p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.22;
+}
