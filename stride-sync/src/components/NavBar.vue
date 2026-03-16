@@ -13,7 +13,7 @@ const fullName = computed(() => {
   return user ? `${user.firstName} ${user.lastName}` : ''
 })
 
-// Clears session and going back to login page 
+// Clears session and going back to login page
 function handleLogout() {
   authStore.logout()
   router.push('/')
@@ -45,11 +45,32 @@ function handleLogout() {
 
       <div class="navbar-menu" :class="{ 'is-active': isActive }">
         <div class="navbar-start">
-          <RouterLink to="/dashboard" class="navbar-item nav-link">Dashboard</RouterLink>
-          <RouterLink to="/activities" class="navbar-item nav-link">Activities</RouterLink>
-          <RouterLink to="/friends" class="navbar-item nav-link">Friends Feed</RouterLink>
+          <RouterLink to="/dashboard" class="navbar-item nav-link">
+            <span class="icon-text">
+              <span class="icon"><i class="fas fa-table-columns"></i></span>
+              <span>Dashboard</span>
+            </span>
+          </RouterLink>
+
+          <RouterLink to="/activities" class="navbar-item nav-link">
+            <span class="icon-text">
+              <span class="icon"><i class="fas fa-dumbbell"></i></span>
+              <span>Activities</span>
+            </span>
+          </RouterLink>
+
+          <RouterLink to="/friends" class="navbar-item nav-link">
+            <span class="icon-text">
+              <span class="icon"><i class="fas fa-user-group"></i></span>
+              <span>Friends Feed</span>
+            </span>
+          </RouterLink>
+
           <RouterLink v-if="authStore.isAdmin" to="/admin/users" class="navbar-item nav-link">
-            Manage Users
+            <span class="icon-text">
+              <span class="icon"><i class="fas fa-users-gear"></i></span>
+              <span>Manage Users</span>
+            </span>
           </RouterLink>
         </div>
 
@@ -102,7 +123,11 @@ function handleLogout() {
   background-color: #eff6ff;
 }
 
-/* Align the logged-in user's name and logout button neatly */ 
+.nav-link .icon {
+  margin-right: 0.35rem;
+}
+
+/* Align the logged-in user's name and logout button neatly */
 .user-section {
   display: flex;
   align-items: center;
