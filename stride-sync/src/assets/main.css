@@ -1,0 +1,234 @@
+@import '@fortawesome/fontawesome-free/css/all.css';
+@import 'bulma/css/bulma.css';
+
+/* Colors used throughout the fitness application accross all pages */
+:root {
+  --primary-color: #0ea5e9;
+  --accent-color: #64748b;
+  --page-bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-color: #1e293b;
+  --muted-text: #64748b;
+  --border-color: #dbe4ee;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Styling for keeping the application's background consistent and full-height layout throughout the app */
+html,
+body,
+#app {
+  min-height: 100vh;
+  background-color: var(--page-bg);
+}
+
+body {
+  margin: 0;
+  background-color: var(--page-bg);
+  color: var(--text-color);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Styling for keeping pages more compact (Reducing bulma section space) */
+.section {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+
+/* Styling the content inside subtitle clearly visible */
+.page-subtitle strong {
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.box,
+.app-panel {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.brand-stat-card {
+  height: 100%;
+}
+
+.brand-stat-card .heading {
+  color: var(--muted-text);
+  font-weight: 600;
+}
+
+.brand-stat-card .title {
+  color: var(--text-color);
+}
+
+.table {
+  background-color: white;
+}
+
+.table thead th {
+  color: var(--text-color);
+  background-color: #eff6ff;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.label {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+/* Styling for form inputs */
+.input,
+.select select,
+.textarea {
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+  background-color: #ffffff;
+  color: var(--text-color);
+}
+
+/* Effect for better visibility while typing */
+.input:focus,
+.select select:focus,
+.textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.125em rgba(59, 130, 246, 0.12);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #94a3b8;
+}
+
+.button {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.button.is-primary {
+  background-color: #0ea5e9;
+  border-color: #0ea5e9;
+  color: white;
+}
+
+.button.is-primary:hover {
+  background-color: #0ea5e9;
+}
+
+.button.is-info {
+  background-color: #0ea5e9;
+  border-color: #0ea5e9;
+  color: white;
+}
+
+/* Centering the login card on the page */
+.auth-shell {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background-color: white;
+  border: 1px solid #e5eaf1;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.auth-brand {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-brand-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+
+.auth-brand-subtitle {
+  color: var(--muted-text);
+  margin-top: 0.25rem;
+}
+
+.soft-divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 1rem 0;
+}
+
+.content.is-small {
+  color: #1e293b;
+}
+
+.content.is-small p {
+  margin-bottom: 0.7rem;
+}
+
+/* Styling for trial user credentials */
+code {
+  background-color: #eef2ff;
+  color: #334155;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+
+/* Keeps edit and delete buttons aligned nicely inside tables */
+.table-action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Was facing issues with text color consistency so this ensured consistent dark text color across headings, panels, and table content */
+.page-title,
+.page-subtitle,
+.box .title,
+.box .title.is-4,
+.box .heading,
+.app-panel .title,
+.app-panel p,
+.table th,
+.table td,
+.table tbody tr,
+.table thead tr {
+  color: #1e293b !important;
+  opacity: 1 !important;
+}
+
+.table tbody tr {
+  background-color: #ffffff !important;
+}
+
+.table tbody tr:hover {
+  background-color: #f8fafc !important;
+}
