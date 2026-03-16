@@ -13,6 +13,7 @@ const role = ref<UserRole>('user')
 
 const isEditing = ref(false)
 const editingUserId = ref<number | null>(null)
+const errorMessage = ref('')
 
 // Reset all form fields and switch back to add mode
 function resetForm() {
@@ -23,10 +24,47 @@ function resetForm() {
   role.value = 'user'
   isEditing.value = false
   editingUserId.value = null
+  errorMessage.value = ''
 }
 
-// Using the same form for both adding and editing users
+// Use the same form for both adding and updating users
 function handleSubmit() {
+  errorMessage.value = ''
+
+  const trimmedFirstName = firstName.value.trim()
+  const trimmedLastName = lastName.value.trim()
+  const trimmedUsername = username.value.trim()
+
+  if (!trimmedFirstName || !trimmedLastName || !trimmedUsername || !password.value) {
+    errorMessage.value = 'All fields are required'
+    return
+  }
+
+  if (trimmedUsername.length < 3) {
+    errorMessage.value = 'Username must be at least 3 characters long'
+    return
+  }
+
+  if (password.value.length < 6) {
+    errorMessage.value = 'Password must be at least 6 characters long'
+    return
+  }
+
+  const duplicateUser = usersStore.users.find((user) => {
+    const sameUsername = user.username.toLowerCase() === trimmedUsername.toLowerCase()
+
+    if (isEditing.value && editingUserId.value !== null) {
+      return sameUsername && user.id !== editingUserId.value
+    }
+
+    return sameUsername
+  })
+
+  if (duplicateUser) {
+    errorMessage.value = 'Username already exists'
+    return
+  }
+
   if (isEditing.value) {
     updateUser()
     return
@@ -57,6 +95,7 @@ function startEdit(user: User) {
   username.value = user.username
   password.value = user.password
   role.value = user.role
+  errorMessage.value = ''
 }
 
 function updateUser() {
@@ -65,7 +104,7 @@ function updateUser() {
   const existingUser = usersStore.getUserById(editingUserId.value)
   if (!existingUser) return
 
-  // Keep the existing friends list while updating the user details
+  // Keep the existing friends list while updating user details
   usersStore.updateUser({
     id: editingUserId.value,
     firstName: firstName.value.trim(),
@@ -79,7 +118,7 @@ function updateUser() {
   resetForm()
 }
 
-// Delete the selected user and reset the form if needed
+// Delete the selected user and clear the form if needed
 function deleteUser(userId: number) {
   usersStore.deleteUser(userId)
 
@@ -93,7 +132,7 @@ function deleteUser(userId: number) {
   <div>
     <div class="page-header">
       <h1 class="page-title">Manage Users</h1>
-      <p class="page-subtitle">Only Admin can Add, Edit, and Remove Users</p>
+      <p class="page-subtitle">Admin can add, edit, and remove users</p>
     </div>
 
     <div class="columns">
@@ -170,7 +209,7 @@ function deleteUser(userId: number) {
                 v-model="username"
                 class="input"
                 type="text"
-                placeholder="Enter username"
+                placeholder="Minimum 3 characters"
                 required
               />
             </div>
@@ -183,7 +222,7 @@ function deleteUser(userId: number) {
                 v-model="password"
                 class="input"
                 type="password"
-                placeholder="Enter password"
+                placeholder="Minimum 6 characters"
                 required
               />
             </div>
@@ -200,6 +239,8 @@ function deleteUser(userId: number) {
               </div>
             </div>
           </div>
+
+          <p v-if="errorMessage" class="help is-danger mb-3">{{ errorMessage }}</p>
 
           <div class="field is-grouped">
             <div class="control">
