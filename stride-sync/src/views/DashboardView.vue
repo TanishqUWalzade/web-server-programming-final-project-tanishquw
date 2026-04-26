@@ -1,57 +1,48 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useActivitiesStore } from '@/stores/activities'
+import * as dashboardService from '@/services/dashboardService'
 
 const authStore = useAuthStore()
 const activitiesStore = useActivitiesStore()
 
 const currentUser = computed(() => authStore.currentUser)
 
-// Shows only the activities of the logged in user on the dashboard
-const userActivities = computed(() => {
-  if (!currentUser.value) return []
-
-  return activitiesStore.activities.filter(
-    (activity) => activity.userId === currentUser.value!.id,
-  )
+// Default summary values are shown before the backend data loads.
+const summary = ref({
+  totalActivities: 0,
+  totalDuration: 0,
+  totalCalories: 0,
+  mostCommonActivity: 'No activities yet',
 })
 
-// Count total activities logged by the user
-const totalActivities = computed(() => userActivities.value.length)
+const isLoading = ref(false)
+const errorMessage = ref('')
 
-// Calculate total duration of all activities for the user
-const totalDuration = computed(() =>
-  userActivities.value.reduce((sum, activity) => sum + activity.duration, 0),
-)
+onMounted(async () => {
+  try {
+    isLoading.value = true
 
-// Calculate total calories burned
-const totalCalories = computed(() =>
-  userActivities.value.reduce((sum, activity) => sum + activity.calories, 0),
-)
-
-// Find the activity that appears most frequently in the user's activity log 
-const mostCommonActivity = computed(() => {
-  if (userActivities.value.length === 0) return 'No activities yet'
-
-  const counts: Record<string, number> = {}
-
-  for (const activity of userActivities.value) {
-    counts[activity.type] = (counts[activity.type] || 0) + 1
+    // Load recent activities and dashboard totals from the backend.
+    await activitiesStore.loadActivities()
+    summary.value = await dashboardService.getSummary()
+  } catch (error) {
+    errorMessage.value =
+      error instanceof Error ? error.message : 'Unable to load dashboard'
+  } finally {
+    isLoading.value = false
   }
-
-  let topActivity = ''
-  let topCount = 0
-
-  for (const [type, count] of Object.entries(counts)) {
-    if (count > topCount) {
-      topActivity = type
-      topCount = count
-    }
-  }
-
-  return topActivity
 })
+
+// The backend already returns only the logged-in user's activities.
+const userActivities = computed(() => activitiesStore.activities)
+
+// These computed values make the template cleaner.
+const totalActivities = computed(() => summary.value.totalActivities)
+const totalDuration = computed(() => summary.value.totalDuration)
+const totalCalories = computed(() => summary.value.totalCalories)
+const mostCommonActivity = computed(() => summary.value.mostCommonActivity)
 </script>
 
 <template>
@@ -59,9 +50,14 @@ const mostCommonActivity = computed(() => {
     <div class="page-header">
       <h1 class="page-title">Dashboard</h1>
       <p v-if="currentUser" class="page-subtitle">
-        Welcome, <strong>{{ currentUser.role === 'admin' ? 'Admin' : 'User' }}</strong> {{ currentUser.firstName }} {{ currentUser.lastName }}
+        Welcome,
+        <strong>{{ currentUser.role === 'admin' ? 'Admin' : 'User' }}</strong>
+        {{ currentUser.firstName }} {{ currentUser.lastName }}
       </p>
     </div>
+
+    <p v-if="isLoading">Loading dashboard...</p>
+    <p v-if="errorMessage" class="help is-danger">{{ errorMessage }}</p>
 
     <div class="columns is-multiline">
       <div class="column is-3">
@@ -121,7 +117,7 @@ const mostCommonActivity = computed(() => {
     </div>
   </div>
 </template>
- 
+
 <style scoped>
 .frequent-activity-text {
   font-size: 2rem;

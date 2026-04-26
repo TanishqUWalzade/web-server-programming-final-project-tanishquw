@@ -1,43 +1,80 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import usersData from '@/data/users.json'
-import type { User } from '@/types'
+import type { User, UserRole } from '@/types'
+import * as userService from '@/services/userService'
 
 export const useUsersStore = defineStore('users', () => {
-  // Loading initial user data from users.json file
-  const users = ref<User[]>(usersData.users as User[])
+  const users = ref<User[]>([])
+  const isLoading = ref(false)
+  const errorMessage = ref('')
 
-  function addUser(user: Omit<User, 'id'>) {
-    // Generate a next id based on current highest id in the list
-    const newId =
-      users.value.length > 0 ? Math.max(...users.value.map((u) => u.id)) + 1 : 1
-
-    users.value.push({
-      id: newId,
-      ...user,
-    })
-  }
-  
-  function updateUser(updatedUser: User) {
-    const index = users.value.findIndex((user) => user.id === updatedUser.id)
-    // Replace the existing user with the updated details
-    if (index !== -1) {
-      users.value[index] = { ...updatedUser }
+  async function loadUsers() {
+    try {
+      isLoading.value = true
+      
+      // Users are loaded from the backend now instead of users.json.
+      users.value = await userService.getUsers()
+      errorMessage.value = ''
+    } catch (error) {
+      errorMessage.value =
+        error instanceof Error ? error.message : 'Unable to load users'
+    } finally {
+      isLoading.value = false
     }
   }
 
-  function deleteUser(userId: number) {
-    // Remove the selected user from the list
+  async function addUser(user: {
+    firstName: string
+    lastName: string
+    username: string
+    password: string
+    role: UserRole
+  }) {
+    // After creating the user in the backend, add it to the local list.
+    const newUser = await userService.createUser(user)
+    users.value.push(newUser)
+    return newUser
+  }
+
+  async function updateUser(
+    id: number,
+    user: Partial<{
+      firstName: string
+      lastName: string
+      username: string
+      password: string
+      role: UserRole
+    }>,
+  ) {
+    // Update the user in the backend first.
+    const updatedUser = await userService.updateUser(id, user)
+    
+    // Then replace the old user in the local state. 
+    const index = users.value.findIndex((item) => item.id === id)
+    if (index !== -1) {
+      users.value[index] = updatedUser
+    }
+
+    return updatedUser
+  }
+
+  async function deleteUser(userId: number) {
+    // Delete the user from the backend, then remove from the local list.
+    const deletedUser = await userService.deleteUser(userId)
     users.value = users.value.filter((user) => user.id !== userId)
+    return deletedUser
   }
 
   function getUserById(userId: number) {
-    // Find a user by id for edit and update operations
+    // Used by the edit form to find the selected user.
     return users.value.find((user) => user.id === userId) || null
   }
 
   return {
     users,
+    isLoading,
+    errorMessage,
+    loadUsers,
     addUser,
     updateUser,
     deleteUser,

@@ -11,8 +11,8 @@ const password = ref('')
 const errorMessage = ref('')
 
 // Validate login and redirect to dashboard if successful, otherwise show error message
-function handleLogin() {
-  const success = authStore.login(username.value.trim(), password.value)
+async function handleLogin() {
+  const success = await authStore.login(username.value.trim(), password.value)
 
   if (success) {
     errorMessage.value = ''
@@ -20,9 +20,8 @@ function handleLogin() {
     return
   }
 
-  errorMessage.value = 'Incorrect username or password'
+  errorMessage.value = authStore.errorMessage || 'Incorrect username or password'
 }
-
 // Clear all the login form fields and any error messages
 function clearLoginForm() {
   username.value = ''

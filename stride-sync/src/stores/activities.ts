@@ -1,40 +1,71 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import activitiesData from '@/data/activities.json'
 import type { Activity } from '@/types'
+import * as activityService from '@/services/activityService'
 
 export const useActivitiesStore = defineStore('activities', () => {
-  // Loading initial activity data from activities.json file
-  const activities = ref<Activity[]>(activitiesData.activities as Activity[])
+  const activities = ref<Activity[]>([])
+  const errorMessage = ref('')
+  const isLoading = ref(false)
 
-  function addActivity(activity: Omit<Activity, 'id'>) {
-    // Generate a next id based on current highest id in the list
-    const newId =
-      activities.value.length > 0
-        ? Math.max(...activities.value.map((a) => a.id)) + 1
-        : 1
-
-    activities.value.push({
-      id: newId,
-      ...activity,
-    })
-  }
-
-  function updateActivity(updatedActivity: Activity) {
-    const index = activities.value.findIndex((activity) => activity.id === updatedActivity.id)
-    // Replace the old activity with the updated one in the list
-    if (index !== -1) {
-      activities.value[index] = { ...updatedActivity }
+  // Activities are now loaded from the backend instead of activities.json.
+  async function loadActivities() {
+    try {
+      isLoading.value = true
+      activities.value = await activityService.getActivities()
+      errorMessage.value = ''
+    } catch (error) {
+      errorMessage.value =
+        error instanceof Error ? error.message : 'Unable to load activities'
+    } finally {
+      isLoading.value = false
     }
   }
+  // After creating an activity in the backend, add it to the local list.
+  async function addActivity(activity: {
+    exerciseTypeId: number
+    duration: number
+    calories: number
+    date: string
+    notes: string
+  }) {
+    const newActivity = await activityService.createActivity(activity)
+    activities.value.push(newActivity)
+    return newActivity
+  }
+  // After updating in the backend, replace the old activity in the local list.
+  async function updateActivity(
+    id: number,
+    activity: Partial<{
+      exerciseTypeId: number
+      duration: number
+      calories: number
+      date: string
+      notes: string
+    }>,
+  ) {
+    const updatedActivity = await activityService.updateActivity(id, activity)
 
-  function deleteActivity(activityId: number) {
-    // Remove the selected activity from the list
+    const index = activities.value.findIndex((item) => item.id === id)
+    if (index !== -1) {
+      activities.value[index] = updatedActivity
+    }
+
+    return updatedActivity
+  }
+
+  // After deleting in the backend, remove it from the local list.
+  async function deleteActivity(activityId: number) {
+    const deletedActivity = await activityService.deleteActivity(activityId)
     activities.value = activities.value.filter((activity) => activity.id !== activityId)
+    return deletedActivity
   }
 
   return {
     activities,
+    errorMessage,
+    isLoading,
+    loadActivities,
     addActivity,
     updateActivity,
     deleteActivity,
