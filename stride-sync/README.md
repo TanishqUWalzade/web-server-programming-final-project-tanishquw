@@ -1,15 +1,24 @@
 # StrideSync
 
-StrideSync is a fitness tracking web application made using Vue 3, TypeScript, Pinia, Vue Router, and Bulma. The main idea of this project is to help users track their physical activities, view activity statistics on a dashboard, and check activities from their friends. Admin users can also manage users in the system.
+StrideSync is a fullstack fitness tracking web application built with Vue 3, TypeScript, Pinia, Vue Router, Bulma, Node.js, Express, JWT authentication, and Supabase.
+
+The project started as a frontend-only exercise app and was converted into a fullstack app with server-side code, database storage, authentication, authorization, and centralized client-server communication.
 
 ## Features
 
-- Login system with admin and user roles
+- Login system with JWT authentication
+- Admin and user roles
+- Password hashing before storing credentials
 - Dashboard showing activity statistics
 - Add, edit, and delete activities
-- Friends feed to view friends' recent activities
-- Admin page to manage users
-- Responsive and clean UI using Bulma
+- Exercise type dropdown loaded from the database
+- Friends management with add/remove friend functionality
+- Friends feed showing activities from added friends
+- Admin page to add, edit, and delete users
+- Supabase PostgreSQL database integration
+- Seed script for demo users, exercise types, activities, and friendships
+- Centralized frontend API service for fetch requests, JWT headers, and error handling
+- Responsive UI using Bulma
 
 ## Technologies Used
 
@@ -20,18 +29,32 @@ StrideSync is a fitness tracking web application made using Vue 3, TypeScript, P
 - Bulma
 - CSS
 - Vite
+- Node.js
+- Express
+- Supabase
+- PostgreSQL
+- JWT
+- bcryptjs
 
 ## Folder Structure
 
-- `src/views` - contains the main page components
-- `src/components` - contains reusable components like the navbar
-- `src/stores` - contains Pinia stores for users, auth, and activities
-- `src/data` - contains sample JSON data
-- `src/assets` - contains global CSS styling
+```text
+stride-sync/
+  src/                    client/frontend Vue application
+    assets/
+    components/
+    router/
+    services/
+    stores/
+    types/
+    views/
+    App.vue
+    main.ts
 
-## How to Run the Project
-
-First install the dependencies:
-
-```bash
-npm install
+  server/                 backend Express/Supabase application
+    controllers/
+    db/
+    models/
+    tools/
+    types/
+    index.ts
