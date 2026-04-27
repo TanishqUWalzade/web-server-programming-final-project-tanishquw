@@ -1,0 +1,187 @@
+### Health check
+GET http://localhost:3000/api/v1/health
+
+
+### Register normal user
+POST http://localhost:3000/api/v1/users/register
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User",
+    "username": "testuser",
+    "password": "testuser9988"
+}
+
+
+### Login as admin
+# Copy the token from this response and paste it into the Authorization headers below.
+POST http://localhost:3000/api/v1/users/login
+Content-Type: application/json
+
+{
+    "username": "tanishq",
+    "password": "tanishq9988"
+}
+
+
+### Login as normal user
+POST http://localhost:3000/api/v1/users/login
+Content-Type: application/json
+
+{
+    "username": "kash",
+    "password": "kash9988"
+}
+
+
+### Get current logged-in user
+GET http://localhost:3000/api/v1/users/me
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Get all users admin only
+GET http://localhost:3000/api/v1/users
+Authorization: Bearer PASTE_ADMIN_TOKEN_HERE
+
+
+### Get users with search and paging admin only
+GET http://localhost:3000/api/v1/users?search=ka&page=1&pageSize=5
+Authorization: Bearer PASTE_ADMIN_TOKEN_HERE
+
+
+### Get one user admin only
+GET http://localhost:3000/api/v1/users/1
+Authorization: Bearer PASTE_ADMIN_TOKEN_HERE
+
+
+### Create user admin only
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+Authorization: Bearer PASTE_ADMIN_TOKEN_HERE
+
+{
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "username": "alice",
+    "password": "alice9988",
+    "role": "user"
+}
+
+
+### Update user admin only
+PATCH http://localhost:3000/api/v1/users/2
+Content-Type: application/json
+Authorization: Bearer PASTE_ADMIN_TOKEN_HERE
+
+{
+    "lastName": "Updated",
+    "role": "user"
+}
+
+
+### Delete user admin only
+DELETE http://localhost:3000/api/v1/users/5
+Authorization: Bearer PASTE_ADMIN_TOKEN_HERE
+
+
+### Get exercise types
+GET http://localhost:3000/api/v1/exercise-types
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Create exercise type admin only
+POST http://localhost:3000/api/v1/exercise-types
+Content-Type: application/json
+Authorization: Bearer PASTE_ADMIN_TOKEN_HERE
+
+{
+    "name": "Basketball",
+    "description": "Basketball games and shooting practice"
+}
+
+
+### Update exercise type admin only
+PATCH http://localhost:3000/api/v1/exercise-types/1
+Content-Type: application/json
+Authorization: Bearer PASTE_ADMIN_TOKEN_HERE
+
+{
+    "description": "Outdoor or treadmill running workouts"
+}
+
+
+### Delete exercise type admin only
+DELETE http://localhost:3000/api/v1/exercise-types/9
+Authorization: Bearer PASTE_ADMIN_TOKEN_HERE
+
+
+### Get my activities
+GET http://localhost:3000/api/v1/activities
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Get one of my activities
+GET http://localhost:3000/api/v1/activities/1
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Create activity
+POST http://localhost:3000/api/v1/activities
+Content-Type: application/json
+Authorization: Bearer PASTE_TOKEN_HERE
+
+{
+    "exerciseTypeId": 1,
+    "duration": 30,
+    "calories": 250,
+    "date": "2026-04-26",
+    "notes": "Easy running workout"
+}
+
+
+### Update my activity
+PATCH http://localhost:3000/api/v1/activities/1
+Content-Type: application/json
+Authorization: Bearer PASTE_TOKEN_HERE
+
+{
+    "duration": 35,
+    "calories": 275,
+    "notes": "Updated running workout"
+}
+
+
+### Delete my activity
+DELETE http://localhost:3000/api/v1/activities/1
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Get dashboard summary
+GET http://localhost:3000/api/v1/dashboard/summary
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Get my friends
+GET http://localhost:3000/api/v1/friends
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Get available users to add as friends
+GET http://localhost:3000/api/v1/friends/available-users
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Get friends activity feed
+GET http://localhost:3000/api/v1/friends/activities
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Add friend
+POST http://localhost:3000/api/v1/friends/2
+Authorization: Bearer PASTE_TOKEN_HERE
+
+
+### Remove friend
+DELETE http://localhost:3000/api/v1/friends/2
+Authorization: Bearer PASTE_TOKEN_HERE
