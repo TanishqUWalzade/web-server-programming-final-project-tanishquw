@@ -32,6 +32,7 @@ function mapFriendActivity(row: Record<string, unknown>): Activity & { friendNam
             : "Unknown User",
     }
 }
+
 // This gets the current user's friends from the friendships table.
 export async function getFriends(userId: number): Promise<User[]> {
     const db = connect()
@@ -43,10 +44,9 @@ export async function getFriends(userId: number): Promise<User[]> {
 
     if (error) throw error
 
-    return (
-        data?.map((row: any) => mapUser(row.users)).filter(Boolean) ?? []
-    )
+    return data?.map((row: any) => mapUser(row.users)).filter(Boolean) ?? []
 }
+
 // This removes users who are already friends so they do not show in the add-friend list.
 export async function getAvailableUsers(userId: number): Promise<User[]> {
     const db = connect()
@@ -76,8 +76,17 @@ export async function getAvailableUsers(userId: number): Promise<User[]> {
 
     return data?.map((row) => mapUser(row)) ?? []
 }
+
 // This gets activities only from users who are friends with the logged-in user.
-export async function getFriendActivities(userId: number) {
+// It supports infinite scrolling by returning only one chunk at a time.
+export async function getFriendActivities(
+    userId: number,
+    limit = 10,
+    offset = 0,
+): Promise<{
+    data: (Activity & { friendName: string })[]
+    total: number
+}> {
     const db = connect()
 
     const { data: friendships, error: friendshipError } = await db
@@ -90,18 +99,27 @@ export async function getFriendActivities(userId: number) {
     const friendIds = friendships?.map((friendship) => friendship.friend_id) ?? []
 
     if (friendIds.length === 0) {
-        return []
+        return {
+            data: [],
+            total: 0,
+        }
     }
 
-    const { data, error } = await db
+    const { data, error, count } = await db
         .from("activities")
-        .select("*, exercise_types(*), users(first_name, last_name)")
+        .select("*, exercise_types(*), users(first_name, last_name)", {
+            count: "exact",
+        })
         .in("user_id", friendIds)
         .order("activity_date", { ascending: false })
+        .range(offset, offset + limit - 1)
 
     if (error) throw error
 
-    return data?.map((row) => mapFriendActivity(row)) ?? []
+    return {
+        data: data?.map((row) => mapFriendActivity(row)) ?? [],
+        total: count ?? 0,
+    }
 }
 
 // This adds another user as a friend of the logged-in user.

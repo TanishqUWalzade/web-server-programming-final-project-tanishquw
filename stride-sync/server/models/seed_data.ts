@@ -4,7 +4,7 @@ config()
 import { connect } from "./supabase"
 import { create as createUser, getByUsername } from "./users"
 
-// This file adds starter demo data for the project .
+// This file adds starter demo data for the project.
 // It checks existing records first, so running it again should not create duplicates.
 
 type SeedUser = {
@@ -97,7 +97,39 @@ const seedExerciseTypes: SeedExerciseType[] = [
     },
 ]
 
+// These generated activities give the Friends Feed enough data to demonstrate infinite scrolling.
+// Since tanishq is friends with kash and kamala, these records appear in tanishq's Friends Feed.
+function createInfiniteScrollDemoActivities(): SeedActivity[] {
+    const users = ["kash", "kamala"]
+    const exerciseTypes = [
+        "Running",
+        "Walking",
+        "Cycling",
+        "Gym",
+        "Yoga",
+        "Swimming",
+        "Hiking",
+        "Pickleball",
+    ]
+
+    return Array.from({ length: 40 }, (_, index) => {
+        const username = users[index % users.length]
+        const exerciseTypeName = exerciseTypes[index % exerciseTypes.length]
+        const day = String((index % 28) + 1).padStart(2, "0")
+
+        return {
+            username,
+            exerciseTypeName,
+            duration: 20 + (index % 8) * 5,
+            calories: 120 + (index % 10) * 45,
+            date: `2026-05-${day}`,
+            notes: `Infinite scroll demo activity ${index + 1}`,
+        }
+    })
+}
+
 // These demo activities make the dashboard and friends feed show data right away.
+// Extra generated records are included so the Friends Feed infinite scroll has enough data to demonstrate loading chunks.
 const seedActivities: SeedActivity[] = [
     {
         username: "tanishq",
@@ -131,6 +163,7 @@ const seedActivities: SeedActivity[] = [
         date: "2026-04-25",
         notes: "Evening walk around campus",
     },
+    ...createInfiniteScrollDemoActivities(),
 ]
 
 // These friendships connect users so the Friends Feed has activity data to show.
@@ -141,6 +174,18 @@ const seedFriendships = [
     },
     {
         username: "tanishq",
+        friendUsername: "kamala",
+    },
+    {
+        username: "coolprofessor",
+        friendUsername: "tanishq",
+    },
+    {
+        username: "coolprofessor",
+        friendUsername: "kash",
+    },
+    {
+        username: "coolprofessor",
         friendUsername: "kamala",
     },
 ]

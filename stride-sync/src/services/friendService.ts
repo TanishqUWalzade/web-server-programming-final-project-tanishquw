@@ -1,4 +1,5 @@
-import { apiFetch } from './api'
+import { apiFetch, apiFetchEnvelope } from './api'
+import type { PaginatedDataListEnvelope } from './api'
 import type { Activity, User } from '@/types'
 
 // Friend activities include the normal activity fields plus the friend's display name.
@@ -16,9 +17,11 @@ export function getAvailableUsers() {
   return apiFetch<User[]>('/friends/available-users')
 }
 
-export function getFriendActivities() {
-  // Gets the activity feed from the current user's friends.
-  return apiFetch<FriendActivity[]>('/friends/activities')
+export function getFriendActivities(limit = 10, offset = 0) {
+  // Gets one paginated chunk of the friends activity feed.
+  return apiFetchEnvelope<PaginatedDataListEnvelope<FriendActivity>>(
+    `/friends/activities?limit=${limit}&offset=${offset}`,
+  )
 }
 
 export function addFriend(friendId: number) {

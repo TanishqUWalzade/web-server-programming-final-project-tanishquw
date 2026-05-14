@@ -14,6 +14,13 @@ const app = Router()
 // All friend routes need the logged-in user from the JWT.
 app.use(requireAuth)
 
+function getPaginationParams(req: any) {
+    const limit = Math.min(Number(req.query.limit) || 10, 25)
+    const offset = Math.max(Number(req.query.offset) || 0, 0)
+
+    return { limit, offset }
+}
+
 app.get("/", async (req, res) => {
     // Get the current user's saved friends.
     const friends = await getFriends(req.user!.id)
@@ -41,13 +48,23 @@ app.get("/available-users", async (req, res) => {
 })
 
 app.get("/activities", async (req, res) => {
-    // Load activity feed only from the logged-in user's friends.
-    const activities = await getFriendActivities(req.user!.id)
+    const { limit, offset } = getPaginationParams(req)
 
-    const response: DataListEnvelope<Activity & { friendName: string }> = {
-        data: activities,
+    // Load activity feed only from the logged-in user's friends.
+    // This endpoint is paginated so the browser does not download the whole feed at once.
+    const result = await getFriendActivities(req.user!.id, limit, offset)
+
+    const response: DataListEnvelope<Activity & { friendName: string }> & {
+        limit: number
+        offset: number
+        hasMore: boolean
+    } = {
+        data: result.data,
         isSuccess: true,
-        total: activities.length,
+        total: result.total,
+        limit,
+        offset,
+        hasMore: offset + result.data.length < result.total,
     }
 
     res.send(response)
